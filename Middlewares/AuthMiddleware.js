@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken")
+require("dotenv").config()
 
 const middleware = {
     verifyAccessToken: (req, res, next) => {
@@ -8,10 +9,9 @@ const middleware = {
             jwt.verify(accessToken, process.env.SECRET_KEY, (err, user) => {
                 if (err) {
                     return res.status(403).json("Token is invalid!")
-                } else {
-                    req.user = user
-                    next()
-                }
+                } 
+                req.user = user
+                next()
             })
         } else {
             return res.status(401).json("You haven't logged in yet!")
@@ -20,6 +20,15 @@ const middleware = {
     verifyAccessTokenAdmin: (req, res, next) => {
         middleware.verifyAccessToken(req, res, () => {
             if (req.user.role_id == 1) {
+                next()
+            } else {
+                return res.status(403).json("You're not allowed!")
+            }
+        })
+    },
+    verifyAccessTokenSuperAdmin: (req, res, next) => {
+        middleware.verifyAccessToken(req, res, () => {
+            if (req.user.role_id == 2) {
                 next()
             } else {
                 return res.status(403).json("You're not allowed!")

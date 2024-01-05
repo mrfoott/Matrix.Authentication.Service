@@ -1,9 +1,13 @@
 const User = require("../Models/user")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
+const dotenv = require("dotenv")
+dotenv.config()
 
 const authController = {
-    registerUser: async(req, res) => {
+
+
+    registerUser: async (req, res) => {
         try {
             const salt = await bcrypt.genSalt(10)
             const password = await bcrypt.hash(req.body.password, salt)
@@ -11,7 +15,7 @@ const authController = {
                 email: req.body.email,
                 password: password,
             }
-            console.log(user);
+            // console.log(user);
             User.registerUser(user, (error, result) => {
                 if (error) {
                     throw error
@@ -24,19 +28,22 @@ const authController = {
         }
     },
     generateAccessToken: (user) => {
+        // console.log("===============================");
+        // console.log(process.env.SECRET_KEY);
         return jwt.sign({
             id: user.id,
             role_id: user.role_id
-        }), process.env.SECRET_KEY, {
+        },
+            process.env.SECRET_KEY, {
             expiresIn: "2h"
-        }
+        })
     },
-    loginUser: async(req, res) => {
+    loginUser: async (req, res) => {
         try {
             const user = {
                 email: req.body.email
             }
-            User.loginUser(user, async(error, result) => {
+            User.loginUser(user, async (error, result) => {
                 if (error) {
                     throw error
                 } else if (!result[0]) {

@@ -1,6 +1,7 @@
 const express = require("express")
 const env = require("dotenv")
 const authRoute = require("./Routes/authRoute")
+require("dotenv").config()
 
 // require.env.config()
 

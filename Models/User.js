@@ -14,6 +14,7 @@ const User = {
     loginUser: (user, callback) => {
         const sql = `SELECT * FROM user 
                     WHERE email = '${user.email}'`
+        // console.log(user);
         return db.query(sql, callback)
     },
     forgotPasswordUser: (user, callback) => {
