@@ -7,6 +7,7 @@ route.post("/register", authController.registerUser)
 route.post("/login", authController.loginUser)
 //REFRESH TOKEN
 route.post("/refreshtoken", authController.requestRefreshToken)
-
+// LOGOUT
+route.post("/logout", authController.logoutUser)
 
 module.exports = route
