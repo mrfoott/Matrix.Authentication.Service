@@ -8,8 +8,14 @@ const accountSchema = new mongoose.Schema({
         minlength: 36,
         maxlength: 36
     },
+    email: {
+        type:String,
+        required:true,
+        minlength:6,
+        unique:true
+    },
     password: {
-        type: string,
+        type: String,
         required: true,
         minlength: 6
     },

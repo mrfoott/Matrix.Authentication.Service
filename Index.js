@@ -1,13 +1,10 @@
 const express = require("express")
-const env = require("dotenv")
-const authRoute = require("./Routes/authRoute")
+const authRoute = require("./Routes/AuthRoute")
 const mongoose = require('mongoose')
 const cors = require("cors")
 const cookieParser = require("cookie-parser")
 
 require("dotenv").config()
-
-// require.env.config()
 
 const app = express()
 app.use(cors())
@@ -17,7 +14,7 @@ app.use(cookieParser())
 //ROUTE GET
 
 //ROUTE POST
-app.use("/", authRoute)
+app.use("/v1/auth", authRoute)
 
 // conn db
 const dbConnect = () => {
