@@ -1,7 +1,12 @@
 const route = require("express").Router()
-const authController = require("../Controllers/authController")
+const authController = require("../Controllers/AuthController")
 
+//LOGIN
 route.post("/register", authController.registerUser)
-// route.post("/login", authController.loginUser)
+//REGISTER
+route.post("/login", authController.loginUser)
+//REFRESH TOKEN
+route.post("/refreshtoken", authController.requestRefreshToken)
+
 
 module.exports = route

@@ -3,11 +3,17 @@ const { v4: uuidv4 } = require('uuid');
 const bcrypt = require("bcrypt")
 const account = require("../Models/account")
 
+let refreshTokenArr = [];
 const authController = {
+    // register controller
     registerUser: async (req, res) => {
         try {
             const salt = await bcrypt.genSalt(10)
             const password = await bcrypt.hash(req.body.password, salt)
+            const existedUser = await account.findOne({email: req.body.email})
+            if(existedUser) {
+                return res.status(400).json({any: "user has been existed!!"})
+            }
             const user = {
                 user_id: uuidv4(),
                 email: req.body.email,
@@ -19,46 +25,80 @@ const authController = {
             res.status(500).json(error)
         }
     },
-//     generateAccessToken: (user) => {
-//         // console.log("===============================");
-//         // console.log(process.env.SECRET_KEY);
-//         return jwt.sign({
-//             id: user.id,
-//             role_id: user.role_id
-//         },
-//             process.env.SECRET_KEY, {
-//             expiresIn: "2h"
-//         })
-//     },
-//     loginUser: async (req, res) => {
-//         try {
-//             const user = {
-//                 email: req.body.email
-//             }
-//             User.loginUser(user, async (error, result) => {
-//                 if (error) {
-//                     throw error
-//                 } else if (!result[0]) {
-//                     res.status(404).json("Wrong email or password!!!")
-//                     return
-//                 }
-//                 const validEmail = await result[0].email
-//                 const validPassword = await bcrypt.compare(req.body.password, result[0].password)
-//                 if (!validPassword) {
-//                     res.status(404).json("Wrong email or password!!!")
-//                     return
-//                 }
-//                 if (validEmail && validPassword) {
-//                     const accessToken = authController.generateAccessToken(result[0])
-//                     const { password, ...other } = result[0]
-//                     res.status(200).json({ ...other, accessToken })
-//                 }
-//             })
 
-//         } catch (error) {
-//             res.status(500).json(error)
-//         }
-//     }
+    //generateToken
+    generateAccessToken: (user) => {
+        return jwt.sign({
+            id: user.user_id,
+            role_id: user.role_id
+        },
+            process.env.JWT_ACCESS_KEY, {
+            expiresIn: "10m"
+        })
+    },
+    generateRefreshToken: (user) => {
+        return jwt.sign({
+            id: user.user_id,
+            role: user.role_id
+        }, process.env.JWT_REFRESH_KEY, {
+            expiresIn: "2h"
+        })
+    },
+    //login
+    loginUser: async (req, res) => {
+        try {
+            const user = await account.findOne({email: req.body.email})
+            if(!user) {
+                return res.status(404).json({status: 404, any: "wrong email or password"})
+            }
+            const validPassword = await bcrypt.compare(req.body.password, user.password)
+            if(!validPassword){
+                return res.status(404).json({status: 404, any: "wrong email or password"})
+            }
+
+            if(user && validPassword){
+                const accessToken = authController.generateAccessToken(user)
+                const refreshToken = authController.generateRefreshToken(user)
+                refreshTokenArr.push(refreshToken)
+                res.cookie("refreshToken", refreshToken, {
+                    path:"/",
+                    httpOnly:true,
+                    sameSite:"strict",
+                    secure:false
+                })
+                const {password, ...orther} = user._doc
+                res.status(200).json({...orther, accessToken})
+            }
+        } catch (error) {
+            res.status(500).json("error")
+        }
+    },
+    //requestRefreshToken
+    requestRefreshToken: async (req, res)=>{
+        const refreshToken = req.cookies.refreshToken;
+        if(!refreshToken){
+            res.status(401).json("You're not authenticated")
+        }
+        if(!refreshTokenArr.includes(refreshToken)){
+            res.status(403).json("Refresh token is not valid")
+        }
+        refreshTokenArr = refreshTokenArr.filter((token)=> token !== refreshToken);
+        jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY, (err, user) =>{
+            if(err){
+                res.status(500).json(err)
+            }
+            const newAccessToken = authController.generateAccessToken(user)
+            const newRefreshToken = authController.generateRefreshToken(user)
+            refreshTokenArr.push(newRefreshToken);
+            res.cookie("refreshToken", newRefreshToken, {
+                httpOnly:true,
+                secure:false,
+                path:"/",
+                sameSite:"strict"
+            })
+            res.status(200).json({accessToken: newAccessToken})
+        })
+    },
 }
 
 module.exports = authController

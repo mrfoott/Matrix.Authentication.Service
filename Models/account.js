@@ -8,6 +8,12 @@ const accountSchema = new mongoose.Schema({
         minlength: 36,
         maxlength: 36
     },
+    role_id: {
+        required: true,
+        type: Number,
+        maxlength: 1,
+        default: 0
+    },
     email: {
         type:String,
         required:true,

@@ -1,8 +1,8 @@
 const express = require("express")
 const authRoute = require("./Routes/AuthRoute")
-const mongoose = require('mongoose')
 const cors = require("cors")
 const cookieParser = require("cookie-parser")
+const dbConnect = require("./ConnectionDB")
 
 require("dotenv").config()
 
@@ -15,16 +15,6 @@ app.use(cookieParser())
 
 //ROUTE POST
 app.use("/v1/auth", authRoute)
-
-// conn db
-const dbConnect = () => {
-    try {
-        mongoose.connect(process.env.MONGODB_URL);
-        console.log("connect success!!");
-    } catch (error) {
-        throw error
-    }
-}
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
