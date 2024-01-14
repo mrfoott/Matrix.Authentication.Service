@@ -9,7 +9,7 @@ const activityLog = new mongoose.Schema({
         maxlength: 36
     },
     activityLog: {
-        ips: { ipAddress: string, maxlength: 30, required: true },
+        ipInfo: [],
         login_time: {
             type: String,
             required: true,
