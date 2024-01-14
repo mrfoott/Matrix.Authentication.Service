@@ -19,23 +19,23 @@
 //     }
 // }
 
-const mysql = require("mysql")
+// const mysql = require("mysql")
 
-const connection = mysql.createConnection({
-    connectionLimit: 10,
-    port: 3306,
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'eccommere_authen'
-});
+// const connection = mysql.createConnection({
+//     connectionLimit: 10,
+//     port: 3306,
+//     host: 'localhost',
+//     user: 'root',
+//     password: '',
+//     database: 'eccommere_authen'
+// });
 
-connection.connect(function(err) {
-    if (err) {
-        throw err
-    } else {
-        console.log("Connected to database");
-    }
-})
+// connection.connect(function(err) {
+//     if (err) {
+//         throw err
+//     } else {
+//         console.log("Connected to database");
+//     }
+// })
 
-module.exports = connection
+// module.exports = connection

@@ -2,6 +2,7 @@ const User = require("../Models/user")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const dotenv = require("dotenv")
+const VerifyCode = require("../Models/verifyCode")
 dotenv.config()
 
 const authController = {
@@ -9,20 +10,22 @@ const authController = {
 
     registerUser: async (req, res) => {
         try {
-            const salt = await bcrypt.genSalt(10)
-            const password = await bcrypt.hash(req.body.password, salt)
-            const user = {
-                email: req.body.email,
-                password: password,
-            }
-            // console.log(user);
-            User.registerUser(user, (error, result) => {
-                if (error) {
-                    throw error
-                } else {
-                    res.status(200).json(result)
-                }
-            })
+            // const salt = await bcrypt.genSalt(10)
+            // const password = await bcrypt.hash(req.body.password, salt)
+            // const user = {
+            //     email: req.body.email,
+            //     password: password,
+            // }
+            // // console.log(user);
+            // User.registerUser(user, (error, result) => {
+            //     if (error) {
+            //         throw error
+            //     } else {
+            //         res.status(200).json(result)
+            //     }
+            // })
+            const result = await VerifyCode.find()
+            res.status(200).json(result)
         } catch (error) {
             res.status(500).json(error)
         }
