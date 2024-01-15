@@ -10,4 +10,7 @@ route.post("/refreshtoken", authController.requestRefreshToken)
 // LOGOUT
 route.post("/logout", authController.logoutUser)
 
+//AUTH FIND ACCOUNT BY ID
+route.get("/findaccount/:email", authController.authFindAccountById)
+
 module.exports = route

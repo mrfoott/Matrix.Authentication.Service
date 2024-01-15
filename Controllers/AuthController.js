@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const bcrypt = require("bcrypt")
 const account = require("../Models/account");
 const activityLog = require("../Models/activityLog");
+const { default: axios } = require("axios");
 
 let refreshTokenArr = [];
 const authController = {
@@ -15,11 +16,18 @@ const authController = {
             if (existedUser) {
                 return res.status(400).json({ any: "user has been existed!!" })
             }
+            await axios.post("http://localhost:8081/v1/verify/comfirmregister", {
+                email: req.body.email,
+                code: req.body.verifyCode
+            }, {}).then((res)=> console.log(res.data))
+            
             const user = {
                 user_id: uuidv4(),
                 email: req.body.email,
                 password: password,
+                verifyCode: req.body.verifyCode
             }
+
             const result = await new account(user).save()
             res.status(200).json(result)
         } catch (error) {
@@ -61,14 +69,29 @@ const authController = {
                 const accessToken = authController.generateAccessToken(user)
                 const refreshToken = authController.generateRefreshToken(user)
                 refreshTokenArr.push(refreshToken)
+                //check ip and send email warning if user login on new device
+                const userLog = await activityLog.find({user_id: user.user_id})
+                let userAgentArray = []
+                for (let i = 0; i < userLog.length; i++) {
+                    const ele = userLog[i];
+                    userAgentArray.push(ele.userAgent)
+                }
+                // console.log(userAgentArray);
+                const timestamp = new Date();
+                // console.log(timestamp);
+                if(!userAgentArray.includes(req.body.userAgent)){
+                    console.log("đăng nhập trên thiết bị mới");
+                    await axios.post(`http://localhost:8081/v1/verify/loginonnewdevice`,{email: req.body.email, 
+                    ipInfo: req.body.ipInfo, userAgent: req.body.userAgent, timestamp: timestamp.toString()
+                }, {})
+                }
+                // save a new log
                 const a_log = await new activityLog({
                     user_id: user.user_id,
                     ipInfo: req.body.ipInfo,
                     userAgent: req.body.userAgent,
                     login_time: new Date(),
                 }).save()
-                //check ip and send email warning if user login on new device
-
                 res.cookie("refreshToken", refreshToken, {
                     path: "/",
                     httpOnly: true,
@@ -76,7 +99,7 @@ const authController = {
                     secure: false
                 })
                 const { password, ...orther } = user._doc
-                res.status(200).json({ ...orther, a_log, accessToken })
+                res.status(200).json({ ...orther, accessToken })
             }
         } catch (error) {
             res.status(500).json("error")
@@ -116,6 +139,18 @@ const authController = {
         res.clearCookie("refreshToken");
         refreshTokenArr = refreshTokenArr.filter(token => token !== req.cookies.refreshToken)
         res.status(200).json("Logout successfully!")
+    },
+    //find user for notification
+    authFindAccountById: async (req, res) => {
+        try {
+            const existedUser = await account.findOne({ email: req.params.email })
+            if(existedUser){
+                return res.status(200).json({existed: true})
+            }
+            return res.status(400).json({existed: false})
+        } catch (error) {
+            res.status(500).json({any: "Server error"})
+        }
     }
 }
 
