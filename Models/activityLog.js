@@ -3,7 +3,6 @@ const mongoose = require('mongoose')
 const activityLog = new mongoose.Schema({
     user_id: {
         required: true,
-        unique: true,
         type: String,
         minlength: 36,
         maxlength: 36
