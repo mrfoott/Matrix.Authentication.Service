@@ -7,7 +7,7 @@ const { default: axios } = require("axios");
 
 let refreshTokenArr = [];
 const authController = {
-    // register controller
+    // Register controller
     registerUser: async (req, res) => {
         try {
             const salt = await bcrypt.genSalt(10)
@@ -35,7 +35,7 @@ const authController = {
         }
     },
 
-    //generateToken
+    //GenerateToken
     generateAccessToken: (user) => {
         return jwt.sign({
             id: user.user_id,
@@ -76,9 +76,7 @@ const authController = {
                     const ele = userLog[i];
                     userAgentArray.push(ele.userAgent)
                 }
-                // console.log(userAgentArray);
                 const timestamp = new Date();
-                // console.log(timestamp);
                 if(!userAgentArray.includes(req.body.userAgent)){
                     console.log("đăng nhập trên thiết bị mới");
                     await axios.post(`http://localhost:8081/v1/verify/loginonnewdevice`,{email: req.body.email, 
@@ -105,7 +103,7 @@ const authController = {
             res.status(500).json("error")
         }
     },
-    //requestRefreshToken
+    //RequestRefreshToken
     requestRefreshToken: async (req, res) => {
         const refreshToken = req.cookies.refreshToken;
         if (!refreshToken) {
@@ -140,7 +138,7 @@ const authController = {
         refreshTokenArr = refreshTokenArr.filter(token => token !== req.cookies.refreshToken)
         res.status(200).json("Logout successfully!")
     },
-    //find user for notification
+    //Find user for notification
     authFindAccountById: async (req, res) => {
         try {
             const existedUser = await account.findOne({ email: req.params.email })
