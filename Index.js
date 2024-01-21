@@ -16,6 +16,7 @@ app.use(cookieParser())
 //ROUTE POST
 app.use("/v1/auth", authRoute)
 
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     dbConnect()
