@@ -14,7 +14,7 @@ app.use(cookieParser())
 //ROUTE GET
 
 //ROUTE POST
-app.use("/v1/auth", authRoute)
+app.use("/api/v1/auth", authRoute)
 
 
 const PORT = process.env.PORT || 3000;

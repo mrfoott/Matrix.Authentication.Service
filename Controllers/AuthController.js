@@ -79,7 +79,7 @@ const authController = {
                 const timestamp = new Date();
                 if(!userAgentArray.includes(req.body.userAgent)){
                     console.log("đăng nhập trên thiết bị mới");
-                    await axios.post(`http://localhost:8081/v1/verify/loginonnewdevice`,{email: req.body.email, 
+                    await axios.post(`http://localhost:8081/api/notify/v1/verify/loginonnewdevice`,{email: req.body.email, 
                     ipInfo: req.body.ipInfo, userAgent: req.body.userAgent, timestamp: timestamp.toString()
                 }, {})
                 }
@@ -145,7 +145,7 @@ const authController = {
             if(existedUser){
                 return res.status(200).json({existed: true})
             }
-            return res.status(400).json({existed: false})
+            return res.status(404).json({existed: false})
         } catch (error) {
             res.status(500).json({any: "Server error"})
         }
