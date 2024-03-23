@@ -15,8 +15,8 @@ const authController = {
             const existedUser = await account.findOne({ email: req.body.email })
             if (existedUser) {
                 return res.status(400).json({ any: "user has been existed!!" })
-            }
-            await axios.post("http://localhost:8081/v1/verify/comfirmregister", {
+            } 
+            await axios.post("http://localhost:8081/api/notify/v1/verify/comfirmregister", {
                 email: req.body.email,
                 code: req.body.verifyCode
             }, {}).then((res)=> console.log(res.data))
@@ -29,6 +29,7 @@ const authController = {
             }
 
             const result = await new account(user).save()
+            
             res.status(200).json(result)
         } catch (error) {
             res.status(500).json(error)
