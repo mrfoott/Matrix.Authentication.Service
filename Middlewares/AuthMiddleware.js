@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
 const middleware = {
-    verifyAccessToken: (req, res, next) => {
+    verifyAccessToken: (req, res) => {
         const accessToken = req.headers.token
 
         if (accessToken) {
@@ -11,25 +11,25 @@ const middleware = {
                     return res.status(403).json("Token is invalid!")
                 } 
                 req.user = user
-                next()
+                return res.status(200).json({status: "Authenticated"})
             })
         } else {
             return res.status(401).json("You haven't logged in yet!")
         }
     },
-    verifyAccessTokenAdmin: (req, res, next) => {
+    verifyAccessTokenAdmin: (req, res) => {
         middleware.verifyAccessToken(req, res, () => {
             if (req.user.role_id == 1) {
-                next()
+                return res.status(200).json({status: "Authenticated"})
             } else {
                 return res.status(403).json("You're not allowed!")
             }
         })
     },
-    verifyAccessTokenSuperAdmin: (req, res, next) => {
+    verifyAccessTokenSuperAdmin: (req, res) => {
         middleware.verifyAccessToken(req, res, () => {
             if (req.user.role_id == 2) {
-                next()
+                return res.status(200).json({status: "Authenticated"})
             } else {
                 return res.status(403).json("You're not allowed!")
             }
