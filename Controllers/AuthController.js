@@ -43,7 +43,7 @@ const authController = {
         userPhone: req.body.phone,
         fullName: req.body.fullname,
         membershipPoint: 0,
-        avatar: "link123",
+        avatar: "https://via.placeholder.com/150",
         roleId: 1,
         membershipId: 1,
       }
