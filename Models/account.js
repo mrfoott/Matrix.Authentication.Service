@@ -12,7 +12,7 @@ const accountSchema = new mongoose.Schema({
         required: true,
         type: Number,
         maxlength: 1,
-        default: 0
+        default: 1
     },
     email: {
         type:String,
