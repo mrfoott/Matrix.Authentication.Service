@@ -150,7 +150,7 @@ const authController = {
           path: "/",
           httpOnly: true,
           sameSite: "strict",
-          secure: false,
+          secure: true,
         });
         const { password, ...orther } = user._doc;
         const { createdAt, updatedAt, isDeleted, ...springData } = springUserData.data;
@@ -179,7 +179,7 @@ const authController = {
       refreshTokenArr.push(newRefreshToken);
       res.cookie("refreshToken", newRefreshToken, {
         httpOnly: true,
-        secure: false,
+        secure: true,
         path: "/",
         sameSite: "strict",
       });
