@@ -1,5 +1,5 @@
 const springServiceUrl = {
-    getUserById: (userId)=> `http://localhost:8080/api/v1/admin/users/${userId}`,
+    getUserById: (userId)=> `https://matrixx2.ddns.net/api/v1/admin/users/${userId}`,
 }
 
 

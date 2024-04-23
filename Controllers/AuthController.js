@@ -19,7 +19,7 @@ const authController = {
       }
       await axios
         .post(
-          "http://localhost:8081/api/notify/v1/verify/comfirmregister",
+          "https://matrixx2.ddns.net/api/notify/v1/verify/comfirmregister",
           {
             email: req.body.email,
             code: req.body.verifyCode,
@@ -48,7 +48,7 @@ const authController = {
         membershipId: 1,
       }
       console.log(body);
-      await axios.post("http://localhost:8080/api/v1/admin/users", {
+      await axios.post("https://matrixx2.ddns.net/api/v1/admin/users", {
         id: user.user_id,
         userEmail: user.email,
         password: user.password,
@@ -124,7 +124,7 @@ const authController = {
         if (!userAgentArray.includes(req.body.userAgent)) {
           console.log("đăng nhập trên thiết bị mới");
           await axios.post(
-            `http://localhost:8081/api/notify/v1/verify/loginonnewdevice`,
+            `https://matrixx2.ddns.net/api/notify/v1/verify/loginonnewdevice`,
             {
               email: req.body.email,
               ipInfo: req.body.ipInfo,
